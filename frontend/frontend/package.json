@@ -1,11 +1,4 @@
 {
-<<<<<<< HEAD
-<<<<<<< HEAD
-  "dependencies": {
-    "axios": "^1.12.2"
-=======
-=======
->>>>>>> frontend
   "name": "frontend",
   "version": "0.1.0",
   "private": true,
@@ -43,9 +36,5 @@
       "last 1 firefox version",
       "last 1 safari version"
     ]
-<<<<<<< HEAD
->>>>>>> frontend
-=======
->>>>>>> frontend
   }
 }
