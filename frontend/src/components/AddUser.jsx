@@ -1,38 +1,46 @@
-import React, { useState } from "react";
-import api from "../api/api";
+import React, { useState } from 'react';
 
-export default function AddUser({ onUserAdded }) {
-  const [name, setName] = useState("");
-  const [email, setEmail] = useState("");
+const AddUser = ({ onAdd }) => {
+  const [name, setName] = useState('');
+  const [email, setEmail] = useState('');
 
-  const handleSubmit = async (e) => {
+  const handleSubmit = (e) => {
     e.preventDefault();
-    try {
-      await api.post("/users", { name, email });
-      alert("✅ Thêm user thành công!");
-      setName("");
-      setEmail("");
-      onUserAdded(); // gọi reload danh sách
-    } catch (err) {
-      alert("❌ Lỗi khi thêm user!");
-      console.error(err);
+    if (name.trim() && email.trim()) {
+      // Gọi hàm onAdd được truyền từ component cha (App.js)
+      // Hàm onAdd sẽ chịu trách nhiệm kết nối API POST
+      onAdd({ name, email }); 
+      setName('');
+      setEmail('');
+    } else {
+      alert('Vui lòng nhập đầy đủ Tên và Email.');
     }
   };
 
   return (
     <form onSubmit={handleSubmit}>
-      <h2>Thêm User</h2>
-      <input
-        value={name}
-        onChange={(e) => setName(e.target.value)}
-        placeholder="Tên user"
-      />
-      <input
-        value={email}
-        onChange={(e) => setEmail(e.target.value)}
-        placeholder="Email user"
-      />
-      <button type="submit">Thêm</button>
+      <h2>Thêm Người dùng Mới</h2>
+      <div>
+        <label>Tên:</label>
+        <input 
+          type="text" 
+          value={name} 
+          onChange={(e) => setName(e.target.value)} 
+          required 
+        />
+      </div>
+      <div>
+        <label>Email:</label>
+        <input 
+          type="email" 
+          value={email} 
+          onChange={(e) => setEmail(e.target.value)} 
+          required 
+        />
+      </div>
+      <button type="submit">Thêm User</button>
     </form>
   );
-}
+};
+
+export default AddUser;

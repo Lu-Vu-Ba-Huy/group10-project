@@ -1,25 +1,23 @@
-import React, { useEffect, useState } from "react";
-import api from "../api/api";
+import React from 'react';
 
-export default function UserList({ refreshFlag }) {
-  const [users, setUsers] = useState([]);
-
-  useEffect(() => {
-    api.get("/users")
-      .then((res) => setUsers(res.data))
-      .catch((err) => console.error("Lỗi khi tải users:", err));
-  }, [refreshFlag]);
-
+const UserList = ({ users }) => {
   return (
     <div>
-      <h2>Danh sách User</h2>
-      <ul>
-        {users.map((user) => (
-          <li key={user.id}>
-            {user.name} ({user.email})
-          </li>
-        ))}
-      </ul>
+      <h2>Danh sách Người dùng</h2>
+      {users.length === 0 ? (
+        <p>Chưa có người dùng nào.</p>
+      ) : (
+        <ul>
+          {users.map(user => (
+            <li key={user.id}>
+              {/* Giả sử mỗi user có thuộc tính 'name' và 'email' */}
+              **{user.name}** - *{user.email}*
+            </li>
+          ))}
+        </ul>
+      )}
     </div>
   );
-}
+};
+
+export default UserList;
