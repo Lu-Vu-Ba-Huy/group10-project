@@ -4,17 +4,10 @@ const mongoose = require("mongoose");
 const app = express();
 app.use(express.json());
 
-// 🔗 Kết nối MongoDB Atlas
-mongoose.connect("mongodb+srv://user123:user123@cluster10.dmgdn1x.mongodb.net/?retryWrites=true&w=majority&appName=Cluster10")
-  .then(() => console.log("✅ Đã kết nối MongoDB Atlas thành công!"))
-  .catch(err => console.log("❌ Lỗi kết nối MongoDB:", err));
-
-// 🧩 Tạo model User
-const userSchema = new mongoose.Schema({
-  name: String,
-  email: String
-});
-const User = mongoose.model("User", userSchema);
+// Kết nối MongoDB
+mongoose.connect(process.env.MONGO_URI)
+  .then(() => console.log("✅ MongoDB connected"))
+  .catch(err => console.error("❌ MongoDB connection error:", err));
 
 // 🧠 API: GET tất cả users
 app.get("/users", async (req, res) => {
