@@ -1,23 +1,27 @@
-import logo from './logo.svg';
+import React from 'react';
 import './App.css';
+import UserList from './components/UserList';
+import AddUser from './components/AddUser';
 
 function App() {
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <nav className="navbar navbar-dark bg-primary">
+        <div className="container">
+          <span className="navbar-brand mb-0 h1">Quản lý người dùng</span>
+        </div>
+      </nav>
+      
+      <div className="container">
+        <div className="row">
+          <div className="col-md-6">
+            <AddUser />
+          </div>
+          <div className="col-md-6">
+            <UserList />
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

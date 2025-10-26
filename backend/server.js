@@ -1,26 +1,99 @@
+// ==========================
+// 1️⃣ Import các thư viện cần thiết
+// ==========================
 const express = require("express");
-const mongoose = require("mongoose");
-
+const cors = require("cors"); // cho phép frontend (port khác) gọi API
 const app = express();
-app.use(express.json());
+require('dotenv').config(); // nạp biến môi trường từ file .env
+const PORT = process.env.PORT || 3000;
+const mongoose = require('mongoose');
 
 // Kết nối MongoDB
-mongoose.connect(process.env.MONGO_URI)
-  .then(() => console.log("✅ MongoDB connected"))
-  .catch(err => console.error("❌ MongoDB connection error:", err));
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('✅ Đã kết nối với MongoDB'))
+  .catch(err => console.error('❌ Lỗi kết nối MongoDB:', err));
 
-// 🧠 API: GET tất cả users
-app.get("/users", async (req, res) => {
-  const users = await User.find();
+// ==========================
+// 2️⃣ Cấu hình middleware
+// ==========================
+app.use(cors()); // bật CORS
+app.use(express.json()); // cho phép nhận dữ liệu JSON trong body request
+
+// ==========================
+// 3️⃣ Routes
+// ==========================
+const userRoutes = require('./routes/userRoutes');
+app.use('/users', userRoutes);
+
+// ==========================
+// 3️⃣ Dữ liệu mẫu (tạm thời lưu trong RAM)
+// ==========================
+let users = [];
+let nextId = 1;
+
+// ==========================
+// 4️⃣ Các route API
+// ==========================
+
+// Kiểm tra server hoạt động
+app.get("/", (req, res) => {
+  res.send("Server is running successfully 🚀");
+});
+
+// 📍 GET /users – Lấy danh sách user
+app.get("/users", (req, res) => {
   res.json(users);
 });
 
-// 🧠 API: POST thêm user
-app.post("/users", async (req, res) => {
-  const newUser = new User(req.body);
-  await newUser.save();
-  res.json(newUser);
+// 📍 POST /users – Thêm user mới
+app.post("/users", (req, res) => {
+  const { name, email } = req.body;
+
+  // Kiểm tra dữ liệu hợp lệ
+  if (!name || !email) {
+    return res.status(400).json({ message: "Name và email là bắt buộc!" });
+  }
+
+  // Tạo user mới
+  const newUser = { id: nextId++, name, email };
+  users.push(newUser);
+
+  // Trả về user vừa tạo
+  res.status(201).json(newUser);
 });
 
-const PORT = 3000;
-app.listen(PORT, () => console.log(`🚀 Server chạy tại cổng ${PORT}`));
+// 📍 PUT /users/:id – Cập nhật thông tin user
+app.put("/users/:id", (req, res) => {
+  const { id } = req.params;
+  const { name, email } = req.body;
+  const user = users.find((u) => u.id === parseInt(id));
+
+  if (!user) {
+    return res.status(404).json({ message: "Không tìm thấy user!" });
+  }
+
+  user.name = name || user.name;
+  user.email = email || user.email;
+
+  res.json(user);
+});
+
+// 📍 DELETE /users/:id – Xóa user
+app.delete("/users/:id", (req, res) => {
+  const { id } = req.params;
+  const exists = users.some((u) => u.id === parseInt(id));
+
+  if (!exists) {
+    return res.status(404).json({ message: "User không tồn tại!" });
+  }
+
+  users = users.filter((u) => u.id !== parseInt(id));
+  res.json({ message: "Đã xóa user thành công!" });
+});
+
+// ==========================
+// 5️⃣ Chạy server
+// ==========================
+app.listen(PORT, () => {
+  console.log(`✅ Server đang chạy tại: http://localhost:${PORT}`);
+});

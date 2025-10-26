@@ -1,1 +1,1 @@
-# Main repository - tổng hợp frontend, backend, database
+Tôi là Thạch Văn Bảo phụ trách Backend
