@@ -1,28 +1,71 @@
 import React, { useState } from "react";
-import api from "../api";
+import axios from 'axios';
 
 export default function EditUser({ user, onClose }) {
-  const [name, setName] = useState(user.name);
-  const [email, setEmail] = useState(user.email);
+  const [formData, setFormData] = useState({
+    name: user.name,
+    email: user.email
+  });
 
-  const handleSave = async () => {
-    if (!name.trim()) return alert("Name không được để trống");
-    if (!/\S+@\S+\.\S+/.test(email)) return alert("Email không hợp lệ");
-    await api.put(`/users/${user._id || user.id}`, { name, email });
-    window.dispatchEvent(new Event("userListChanged"));
-    onClose();
+  const handleChange = (e) => {
+    setFormData({
+      ...formData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    
+    // Validation
+    if (!formData.name.trim()) {
+      alert("Tên không được để trống");
+      return;
+    }
+    if (!/\S+@\S+\.\S+/.test(formData.email)) {
+      alert("Email không hợp lệ");
+      return;
+    }
+
+    try {
+      await axios.put(`http://localhost:3000/users/${user._id}`, formData);
+      window.dispatchEvent(new Event("userListChanged"));
+      onClose();
+      alert("Cập nhật thành công!");
+    } catch (error) {
+      console.error('Error updating user:', error);
+      alert("Có lỗi xảy ra khi cập nhật người dùng");
+    }
   };
 
   return (
-    <div className="modal-backdrop">
+    <div className="modal-overlay">
       <div className="modal">
-        <h3>Sửa User</h3>
-        <input value={name} onChange={(e) => setName(e.target.value)} />
-        <input value={email} onChange={(e) => setEmail(e.target.value)} />
-        <div className="modal-actions">
-          <button onClick={onClose} className="btn-muted">Hủy</button>
-          <button onClick={handleSave}>Lưu</button>
-        </div>
+        <h2>Sửa thông tin người dùng</h2>
+        <form onSubmit={handleSubmit}>
+          <div className="form-group">
+            <label>Tên:</label>
+            <input
+              type="text"
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="form-group">
+            <label>Email:</label>
+            <input
+              type="email"
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+            />
+          </div>
+          <div className="button-group">
+            <button type="button" onClick={onClose}>Hủy</button>
+            <button type="submit">Lưu thay đổi</button>
+          </div>
+        </form>
       </div>
     </div>
   );
