@@ -6,13 +6,24 @@ const cors = require("cors"); // cho phép frontend (port khác) gọi API
 const app = express();
 require('dotenv').config(); // nạp biến môi trường từ file .env
 const PORT = process.env.PORT || 3000;
+const mongoose = require('mongoose');
 
+// Kết nối MongoDB
+mongoose.connect(process.env.MONGODB_URI)
+  .then(() => console.log('✅ Đã kết nối với MongoDB'))
+  .catch(err => console.error('❌ Lỗi kết nối MongoDB:', err));
 
 // ==========================
 // 2️⃣ Cấu hình middleware
 // ==========================
 app.use(cors()); // bật CORS
 app.use(express.json()); // cho phép nhận dữ liệu JSON trong body request
+
+// ==========================
+// 3️⃣ Routes
+// ==========================
+const userRoutes = require('./routes/userRoutes');
+app.use('/users', userRoutes);
 
 // ==========================
 // 3️⃣ Dữ liệu mẫu (tạm thời lưu trong RAM)
