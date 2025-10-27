@@ -33,16 +33,35 @@ export default function AddUser() {
       setFormData({ name: "", email: "" });
       // Thông báo cho UserList biết có thay đổi
       window.dispatchEvent(new Event("userListChanged"));
-      alert("Thêm người dùng thành công!");
+      alert("Thêm người dùng thành công!\nPassword mặc định: 123456");
     } catch (error) {
       console.error('Error adding user:', error);
-      alert("Có lỗi xảy ra khi thêm người dùng");
+      const errorMsg = error.response?.data?.message || "Có lỗi xảy ra khi thêm người dùng";
+      alert(errorMsg);
     }
   };
 
   return (
     <div className="add-user">
       <h2>Thêm người dùng mới</h2>
+      
+      <div style={{ 
+        padding: '15px', 
+        backgroundColor: '#e3f2fd', 
+        borderRadius: '8px', 
+        marginBottom: '20px',
+        border: '1px solid #2196F3'
+      }}>
+        <p style={{ margin: 0, color: '#1976d2' }}>
+          ℹ️ <strong>Lưu ý:</strong> User mới sẽ có password mặc định là <code style={{ 
+            backgroundColor: '#fff', 
+            padding: '2px 8px', 
+            borderRadius: '4px',
+            fontWeight: 'bold'
+          }}>123456</code>
+        </p>
+      </div>
+
       <form onSubmit={handleSubmit}>
         <div className="form-group">
           <label>Tên:</label>
