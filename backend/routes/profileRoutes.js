@@ -3,7 +3,7 @@ const router = express.Router();
 const multer = require('multer');
 const path = require('path');
 const fs = require('fs');
-const User = require('../models/User');
+const User = require('../models/user');
 const authMiddleware = require('../middleware/auth');
 
 // Cấu hình multer để upload file
