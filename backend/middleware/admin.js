@@ -1,4 +1,4 @@
-const User = require('../models/User');
+const User = require('../models/user');
 
 // Middleware kiểm tra quyền Admin
 const adminMiddleware = async (req, res, next) => {
