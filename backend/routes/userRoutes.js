@@ -1,6 +1,6 @@
 const express = require('express');
 const router = express.Router();
-const User = require('../models/User');
+const User = require('../models/user');
 
 // GET tất cả users
 router.get('/', async (req, res) => {
@@ -14,15 +14,43 @@ router.get('/', async (req, res) => {
 
 // POST tạo user mới
 router.post('/', async (req, res) => {
-  const user = new User({
-    name: req.body.name,
-    email: req.body.email
-  });
-
   try {
+    const { name, email } = req.body;
+
+    // Validation
+    if (!name || !email) {
+      return res.status(400).json({ 
+        message: 'Tên và email là bắt buộc' 
+      });
+    }
+
+    // Kiểm tra email đã tồn tại chưa
+    const existingUser = await User.findOne({ email });
+    if (existingUser) {
+      return res.status(400).json({ 
+        message: 'Email này đã được sử dụng' 
+      });
+    }
+
+    // Tạo user mới với password mặc định
+    const user = new User({
+      name,
+      email,
+      password: '123456' // Password mặc định
+    });
+
     const newUser = await user.save();
-    res.status(201).json(newUser);
+    
+    // Trả về user (không bao gồm password)
+    res.status(201).json({
+      _id: newUser._id,
+      name: newUser.name,
+      email: newUser.email,
+      role: newUser.role,
+      createdAt: newUser.createdAt
+    });
   } catch (error) {
+    console.error('Error creating user:', error);
     res.status(400).json({ message: error.message });
   }
 });

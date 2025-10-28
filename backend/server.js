@@ -16,14 +16,33 @@ mongoose.connect(process.env.MONGODB_URI)
 // ==========================
 // 2️⃣ Cấu hình middleware
 // ==========================
-app.use(cors()); // bật CORS
-app.use(express.json()); // cho phép nhận dữ liệu JSON trong body request
+// Cấu hình CORS với các options cụ thể
+app.use(cors({
+  origin: 'http://localhost:3001', // Allow frontend origin
+  methods: ['GET', 'POST', 'PUT', 'DELETE'], // Allow specific methods
+  allowedHeaders: ['Content-Type', 'Authorization'], // Allow specific headers
+  credentials: true // Allow cookies and credentials
+}));
+
+// Cấu hình limits cho express
+app.use(express.json({ limit: '10mb' })); // Tăng giới hạn body size
+app.use(express.urlencoded({ extended: true, limit: '10mb' })); // Tăng giới hạn URL-encoded data
+
+// Serve static files (avatars)
+app.use('/uploads', express.static('uploads'));
 
 // ==========================
 // 3️⃣ Routes
 // ==========================
 const userRoutes = require('./routes/userRoutes');
+const authRoutes = require('./routes/authRoutes');
+const profileRoutes = require('./routes/profileRoutes');
+const adminRoutes = require('./routes/adminRoutes');
+
 app.use('/users', userRoutes);
+app.use('/auth', authRoutes);
+app.use('/profile', profileRoutes);
+app.use('/admin', adminRoutes);
 
 // ==========================
 // 3️⃣ Dữ liệu mẫu (tạm thời lưu trong RAM)

@@ -1,28 +1,70 @@
 import React from 'react';
-import './App.css';
+import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
+import { AuthProvider } from './context/AuthContext';
+import Navbar from './components/Navbar';
+import Login from './components/Login';
+import Register from './components/Register';
+import ForgotPassword from './components/ForgotPassword';
+import ResetPassword from './components/ResetPassword';
 import UserList from './components/UserList';
 import AddUser from './components/AddUser';
+import Profile from './components/Profile';
+import AdminUserList from './components/AdminUserList';
+import ProtectedRoute from './components/ProtectedRoute';
+import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <nav className="navbar navbar-dark bg-primary">
-        <div className="container">
-          <span className="navbar-brand mb-0 h1">Quản lý người dùng</span>
+    <Router>
+      <AuthProvider>
+        <div className="App">
+          <Navbar />
+          
+          <Routes>
+            {/* Trang chủ */}
+            <Route path="/" element={
+              <div style={{ textAlign: 'center', padding: '50px' }}>
+                <h1>🏠 CHÀO MỪNG ĐẾN VỚI HỆ THỐNG QUẢN LÝ USER</h1>
+                <p style={{ fontSize: '18px', marginTop: '20px' }}>
+                  
+                </p>
+              </div>
+            } />
+            
+            {/* Auth routes - không cần đăng nhập */}
+            <Route path="/login" element={<Login />} />
+            <Route path="/register" element={<Register />} />
+            <Route path="/forgot-password" element={<ForgotPassword />} />
+            <Route path="/reset-password" element={<ResetPassword />} />
+            
+            {/* Protected routes - cần đăng nhập */}
+            <Route path="/users" element={
+              <ProtectedRoute>
+                <UserList />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/add-user" element={
+              <ProtectedRoute>
+                <AddUser />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/profile" element={
+              <ProtectedRoute>
+                <Profile />
+              </ProtectedRoute>
+            } />
+            
+            <Route path="/admin/users" element={
+              <ProtectedRoute>
+                <AdminUserList />
+              </ProtectedRoute>
+            } />
+          </Routes>
         </div>
-      </nav>
-      
-      <div className="container">
-        <div className="row">
-          <div className="col-md-6">
-            <AddUser />
-          </div>
-          <div className="col-md-6">
-            <UserList />
-          </div>
-        </div>
-      </div>
-    </div>
+      </AuthProvider>
+    </Router>
   );
 }
 
