@@ -4,7 +4,7 @@ import axios from 'axios';
 import '../styles.css';
 
 export default function Profile() {
-  const { user, token } = useAuth();
+  const { token } = useAuth(); // Removed unused 'user'
   const [isEditing, setIsEditing] = useState(false);
   const [loading, setLoading] = useState(false);
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
@@ -25,11 +25,6 @@ export default function Profile() {
     newPassword: '',
     confirmNewPassword: ''
   });
-
-  // Lấy thông tin profile khi component mount
-  useEffect(() => {
-    fetchProfile();
-  }, []);
 
   // Hàm lấy thông tin profile từ API
   const fetchProfile = async () => {
@@ -53,6 +48,12 @@ export default function Profile() {
       setError(error.response?.data?.message || 'Không thể tải thông tin profile');
     }
   };
+
+  // Lấy thông tin profile khi component mount
+  useEffect(() => {
+    fetchProfile();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Xử lý thay đổi input
   const handleChange = (e) => {
