@@ -24,9 +24,9 @@ function App() {
             {/* Trang chủ */}
             <Route path="/" element={
               <div style={{ textAlign: 'center', padding: '50px' }}>
-                <h1>🏠 Chào mừng đến với hệ thống quản lý User</h1>
+                <h1>🏠 CHÀO MỪNG ĐẾN VỚI HỆ THỐNG QUẢN LÝ USER</h1>
                 <p style={{ fontSize: '18px', marginTop: '20px' }}>
-                  Vui lòng đăng nhập để sử dụng hệ thống
+                  
                 </p>
               </div>
             } />
