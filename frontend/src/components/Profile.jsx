@@ -34,7 +34,7 @@ export default function Profile() {
   // Hàm lấy thông tin profile từ API
   const fetchProfile = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/profile', {
+      const response = await axios.get('http://localhost:3000/api/profile', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -92,7 +92,7 @@ export default function Profile() {
 
       // Upload lên backend
       const response = await axios.post(
-        'http://localhost:3000/profile/upload-avatar',
+        'http://localhost:3000/api/profile/upload-avatar',
         formData,
         {
           headers: {
@@ -155,7 +155,7 @@ export default function Profile() {
 
     try {
       const response = await axios.put(
-        'http://localhost:3000/profile',
+        'http://localhost:3000/api/profile',
         {
           name: editData.name,
           email: editData.email,

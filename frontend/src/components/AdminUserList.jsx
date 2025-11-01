@@ -24,7 +24,7 @@ export default function AdminUserList() {
   const fetchUsers = React.useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:3000/admin/users', {
+      const response = await axios.get('http://localhost:3000/api/admin/users', {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -52,7 +52,7 @@ export default function AdminUserList() {
     }
 
     try {
-      await axios.delete(`http://localhost:3000/admin/users/${userId}`, {
+      await axios.delete(`http://localhost:3000/api/admin/users/${userId}`, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -82,7 +82,7 @@ export default function AdminUserList() {
 
     try {
       await axios.put(
-        `http://localhost:3000/admin/users/${userId}/role`,
+        `http://localhost:3000/api/admin/users/${userId}/role`,
         { role: newRole },
         {
           headers: {

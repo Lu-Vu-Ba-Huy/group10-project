@@ -28,7 +28,7 @@ export default function AddUser() {
     }
 
     try {
-      await axios.post("http://localhost:3000/users", formData);
+      await axios.post("http://localhost:3000/api/users", formData);
       // Reset form
       setFormData({ name: "", email: "" });
       // Thông báo cho UserList biết có thay đổi

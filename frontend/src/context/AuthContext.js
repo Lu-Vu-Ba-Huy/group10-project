@@ -22,7 +22,7 @@ export const AuthProvider = ({ children }) => {
   // Lấy thông tin user hiện tại
   const fetchUserInfo = React.useCallback(async () => {
     try {
-      const response = await axios.get('http://localhost:3000/auth/me');
+      const response = await axios.get('http://localhost:3000/api/auth/me');
       setUser(response.data.user);
     } catch (error) {
       console.error('Lỗi lấy thông tin user:', error);
@@ -51,7 +51,7 @@ export const AuthProvider = ({ children }) => {
   // Đăng ký
   const register = async (name, email, password) => {
     try {
-      const response = await axios.post('http://localhost:3000/auth/register', {
+      const response = await axios.post('http://localhost:3000/api/auth/register', {
         name,
         email,
         password
@@ -77,7 +77,7 @@ export const AuthProvider = ({ children }) => {
   // Đăng nhập
   const login = async (email, password) => {
     try {
-      const response = await axios.post('http://localhost:3000/auth/login', {
+      const response = await axios.post('http://localhost:3000/api/auth/login', {
         email,
         password
       });
