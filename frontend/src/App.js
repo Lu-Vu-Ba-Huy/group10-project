@@ -10,6 +10,7 @@ import UserList from './components/UserList';
 import AddUser from './components/AddUser';
 import Profile from './components/Profile';
 import AdminUserList from './components/AdminUserList';
+import Home from './components/Home';
 import ProtectedRoute from './components/ProtectedRoute';
 import './App.css';
 
@@ -22,14 +23,7 @@ function App() {
           
           <Routes>
             {/* Trang chủ */}
-            <Route path="/" element={
-              <div style={{ textAlign: 'center', padding: '50px' }}>
-                <h1>🏠 Chào mừng đến với hệ thống quản lý User</h1>
-                <p style={{ fontSize: '18px', marginTop: '20px' }}>
-                  Vui lòng đăng nhập để sử dụng hệ thống
-                </p>
-              </div>
-            } />
+            <Route path="/" element={<Home />} />
             
             {/* Auth routes - không cần đăng nhập */}
             <Route path="/login" element={<Login />} />
