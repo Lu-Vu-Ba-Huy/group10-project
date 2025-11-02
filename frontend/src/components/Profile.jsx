@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 import '../styles.css';
 
 export default function Profile() {
@@ -34,7 +35,7 @@ export default function Profile() {
   // Hàm lấy thông tin profile từ API
   const fetchProfile = async () => {
     try {
-      const response = await axios.get('http://localhost:3000/api/profile', {
+      const response = await axios.get(API_ENDPOINTS.PROFILE, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -93,7 +94,7 @@ export default function Profile() {
 
       // Upload lên backend (Cloudinary)
       const response = await axios.post(
-        'http://localhost:3000/api/profile/upload-avatar',
+        API_ENDPOINTS.PROFILE_UPLOAD_AVATAR,
         formData,
         {
           headers: {
@@ -159,7 +160,7 @@ export default function Profile() {
 
     try {
       const response = await axios.put(
-        'http://localhost:3000/api/profile',
+        API_ENDPOINTS.PROFILE,
         {
           name: editData.name,
           email: editData.email,

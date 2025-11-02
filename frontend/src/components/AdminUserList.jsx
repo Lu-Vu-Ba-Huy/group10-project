@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 import '../styles.css';
 
 export default function AdminUserList() {
@@ -24,7 +25,7 @@ export default function AdminUserList() {
   const fetchUsers = React.useCallback(async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:3000/api/admin/users', {
+      const response = await axios.get(API_ENDPOINTS.ADMIN_USERS, {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -52,7 +53,7 @@ export default function AdminUserList() {
     }
 
     try {
-      await axios.delete(`http://localhost:3000/api/admin/users/${userId}`, {
+      await axios.delete(API_ENDPOINTS.ADMIN_DELETE_USER(userId), {
         headers: {
           'Authorization': `Bearer ${token}`
         }
@@ -82,7 +83,7 @@ export default function AdminUserList() {
 
     try {
       await axios.put(
-        `http://localhost:3000/api/admin/users/${userId}/role`,
+        API_ENDPOINTS.ADMIN_CHANGE_ROLE(userId),
         { role: newRole },
         {
           headers: {

@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 import '../styles.css';
 
 export default function UserList() {
@@ -27,7 +28,7 @@ export default function UserList() {
   const fetchUsers = async () => {
     try {
       setLoading(true);
-      const response = await axios.get('http://localhost:3000/api/users');
+      const response = await axios.get(API_ENDPOINTS.USERS);
       setUsers(response.data.users || []);
       setError('');
     } catch (error) {

@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 import '../styles.css';
 
 export default function ForgotPassword() {
@@ -29,7 +30,7 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:3000/api/auth/forgot-password', {
+      const response = await axios.post(API_ENDPOINTS.AUTH_FORGOT_PASSWORD, {
         email
       });
 

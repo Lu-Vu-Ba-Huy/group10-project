@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import axios from 'axios';
+import { API_ENDPOINTS } from '../config/api';
 
 export default function AddUser() {
   const [formData, setFormData] = useState({
@@ -28,7 +29,7 @@ export default function AddUser() {
     }
 
     try {
-      await axios.post("http://localhost:3000/api/users", formData);
+      await axios.post(API_ENDPOINTS.USERS, formData);
       // Reset form
       setFormData({ name: "", email: "" });
       // Thông báo cho UserList biết có thay đổi
