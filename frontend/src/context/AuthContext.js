@@ -49,12 +49,13 @@ export const AuthProvider = ({ children }) => {
   }, [token, fetchUserInfo]);
 
   // Đăng ký
-  const register = async (name, email, password) => {
+  const register = async (name, email, password, role) => {
     try {
       const response = await axios.post('http://localhost:3000/api/auth/register', {
         name,
         email,
-        password
+        password,
+        role
       });
 
       const { token, user } = response.data;

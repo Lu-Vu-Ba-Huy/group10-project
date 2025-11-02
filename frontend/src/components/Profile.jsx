@@ -69,14 +69,15 @@ export default function Profile() {
     const file = e.target.files[0];
     if (!file) return;
 
-    // Validate file
-    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+    // Validate file type
+    const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif', 'image/webp'];
     if (!validTypes.includes(file.type)) {
-      setError('Chỉ chấp nhận file ảnh (JPG, PNG, GIF)');
+      setError('Chỉ chấp nhận file ảnh (JPG, PNG, GIF, WebP)');
       return;
     }
 
-    const maxSize = 5 * 1024 * 1024; // 5MB
+    // Validate file size (5MB)
+    const maxSize = 5 * 1024 * 1024;
     if (file.size > maxSize) {
       setError('Kích thước file không được vượt quá 5MB');
       return;
@@ -90,7 +91,7 @@ export default function Profile() {
       const formData = new FormData();
       formData.append('avatar', file);
 
-      // Upload lên backend
+      // Upload lên backend (Cloudinary)
       const response = await axios.post(
         'http://localhost:3000/api/profile/upload-avatar',
         formData,
@@ -105,6 +106,9 @@ export default function Profile() {
       setProfileData({ ...profileData, avatar: response.data.avatarUrl });
       setSuccess('Cập nhật avatar thành công!');
       setTimeout(() => setSuccess(''), 3000);
+      
+      // Reload profile
+      await fetchProfile();
       
     } catch (error) {
       console.error('Upload avatar error:', error);

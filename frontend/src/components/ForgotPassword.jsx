@@ -29,15 +29,17 @@ export default function ForgotPassword() {
     setLoading(true);
 
     try {
-      const response = await axios.post('http://localhost:3000/auth/forgot-password', {
+      const response = await axios.post('http://localhost:3000/api/auth/forgot-password', {
         email
       });
 
       setSuccess(response.data.message);
-      setResetToken(response.data.token);
       
-      // Hiển thị token để user copy (trong thực tế sẽ gửi qua email)
-      alert(`✅ Token reset password của bạn:\n\n${response.data.token}\n\n⚠️ Vui lòng copy token này để đổi mật khẩu!\n\nToken có hiệu lực trong 15 phút.`);
+      // Nếu có resetToken trong response (development mode)
+      if (response.data.resetToken) {
+        setResetToken(response.data.resetToken);
+        alert(`✅ Token reset password của bạn:\n\n${response.data.resetToken}\n\n⚠️ Vui lòng copy token này để đổi mật khẩu!\n\nToken có hiệu lực trong 15 phút.`);
+      }
       
     } catch (error) {
       console.error('Forgot password error:', error);

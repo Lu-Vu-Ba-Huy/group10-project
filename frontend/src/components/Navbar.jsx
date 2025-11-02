@@ -35,17 +35,18 @@ export default function Navbar() {
             </Link>
             
             {user?.role === 'admin' && (
-              <Link to="/admin/users" style={{ color: 'white', textDecoration: 'none' }}>
-                👑 Admin Panel
-              </Link>
+              <>
+                <Link to="/admin/users" style={{ color: 'white', textDecoration: 'none' }}>
+                  👑 Admin Panel
+                </Link>
+                <Link to="/users" style={{ color: 'white', textDecoration: 'none' }}>
+                  👥 Quản Lý User
+                </Link>
+                <Link to="/add-user" style={{ color: 'white', textDecoration: 'none' }}>
+                  ➕ Thêm User
+                </Link>
+              </>
             )}
-            
-            <Link to="/users" style={{ color: 'white', textDecoration: 'none' }}>
-              👥 Quản Lý User
-            </Link>
-            <Link to="/add-user" style={{ color: 'white', textDecoration: 'none' }}>
-              ➕ Thêm User
-            </Link>
           </>
         )}
       </div>

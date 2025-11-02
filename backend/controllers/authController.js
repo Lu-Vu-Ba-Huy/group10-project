@@ -1,5 +1,7 @@
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 const User = require('../models/User');
+const { sendPasswordResetEmail } = require('../services/emailService');
 
 // Create token payload
 const createTokenPayload = (user) => ({
@@ -113,10 +115,103 @@ const getCurrentUser = async (req, res) => {
   }
 };
 
+// POST /api/auth/forgot-password - Request password reset
+const forgotPassword = async (req, res) => {
+  try {
+    const { email } = req.body;
+
+    if (!email) {
+      return res.status(400).json({ message: 'Please provide email address' });
+    }
+
+    const user = await User.findOne({ email: email.toLowerCase() });
+    
+    if (!user) {
+      // Không tiết lộ email có tồn tại hay không (bảo mật)
+      return res.status(200).json({ 
+        message: 'If that email exists, a password reset link has been sent.' 
+      });
+    }
+
+    // Tạo token reset password (random 32 bytes)
+    const resetToken = crypto.randomBytes(32).toString('hex');
+    
+    // Hash token trước khi lưu vào database
+    const hashedToken = crypto.createHash('sha256').update(resetToken).digest('hex');
+    
+    // Lưu token và thời gian hết hạn (15 phút)
+    user.resetPasswordToken = hashedToken;
+    user.resetPasswordExpires = Date.now() + 15 * 60 * 1000; // 15 minutes
+    await user.save();
+
+    // Gửi email (giả lập - log ra console)
+    const emailResult = await sendPasswordResetEmail(user.email, resetToken, user.name);
+
+    return res.status(200).json({
+      message: 'Password reset instructions have been sent to your email.',
+      // Trong development, trả về token để test
+      resetToken,
+      resetUrl: `http://localhost:3000/reset-password?token=${resetToken}`,
+      emailPreview: emailResult.preview
+    });
+  } catch (error) {
+    console.error('Forgot password error:', error);
+    return res.status(500).json({ message: 'Error processing password reset', detail: error.message });
+  }
+};
+
+// POST /api/auth/reset-password - Reset password with token
+const resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
+
+    if (!token || !newPassword) {
+      return res.status(400).json({ message: 'Please provide token and new password' });
+    }
+
+    if (newPassword.length < 6) {
+      return res.status(400).json({ message: 'Password must be at least 6 characters' });
+    }
+
+    // Hash token từ request để so sánh với database
+    const hashedToken = crypto.createHash('sha256').update(token).digest('hex');
+
+    // Tìm user với token hợp lệ và chưa hết hạn
+    const user = await User.findOne({
+      resetPasswordToken: hashedToken,
+      resetPasswordExpires: { $gt: Date.now() }
+    });
+
+    if (!user) {
+      return res.status(400).json({ 
+        message: 'Invalid or expired reset token. Please request a new password reset.' 
+      });
+    }
+
+    // Đổi password
+    user.password = newPassword;
+    user.resetPasswordToken = null;
+    user.resetPasswordExpires = null;
+    await user.save();
+
+    console.log(`✅ Password reset successfully for user: ${user.email}`);
+
+    return res.status(200).json({
+      message: 'Password has been reset successfully! You can now login with your new password.',
+      success: true
+    });
+  } catch (error) {
+    console.error('Reset password error:', error);
+    return res.status(500).json({ message: 'Error resetting password', detail: error.message });
+  }
+};
+
 module.exports = {
   dangKy,
   dangNhap,
   dangXuat,
-  getCurrentUser
+  getCurrentUser,
+  forgotPassword,
+  resetPassword
 };
 

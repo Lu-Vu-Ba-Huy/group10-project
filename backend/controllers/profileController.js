@@ -1,5 +1,6 @@
 const User = require('../models/User');
 const bcrypt = require('bcryptjs');
+const cloudinary = require('../config/cloudinary');
 
 // GET /api/profile - Get user profile
 const xemProfile = async (req, res) => {
@@ -103,21 +104,37 @@ const capNhatProfile = async (req, res) => {
   }
 };
 
-// POST /api/profile/upload-avatar - Upload avatar (placeholder - needs file upload middleware)
+// POST /api/profile/upload-avatar - Upload avatar to Cloudinary
 const uploadAvatar = async (req, res) => {
   try {
-    // This is a placeholder. In production, you would use multer or similar
-    // to handle file uploads and store them in cloud storage (AWS S3, Cloudinary, etc.)
-    
-    const { avatar } = req.body;
-
-    if (!avatar) {
-      return res.status(400).json({ message: 'Avatar URL is required.' });
+    if (!req.file) {
+      return res.status(400).json({ message: 'Please select an image to upload' });
     }
 
+    // Upload image to Cloudinary using buffer
+    const uploadResult = await new Promise((resolve, reject) => {
+      const uploadStream = cloudinary.uploader.upload_stream(
+        {
+          folder: 'avatars',
+          transformation: [
+            { width: 300, height: 300, crop: 'fill', gravity: 'face' },
+            { quality: 'auto' }
+          ]
+        },
+        (error, result) => {
+          if (error) reject(error);
+          else resolve(result);
+        }
+      );
+
+      // Pipe file buffer to Cloudinary
+      uploadStream.end(req.file.buffer);
+    });
+
+    // Update user avatar in database
     const user = await User.findByIdAndUpdate(
       req.user.id,
-      { avatar },
+      { avatar: uploadResult.secure_url },
       { new: true }
     ).select('-password');
 
@@ -125,14 +142,19 @@ const uploadAvatar = async (req, res) => {
       return res.status(404).json({ message: 'User not found.' });
     }
 
+    console.log(`✅ Avatar uploaded to Cloudinary: ${uploadResult.secure_url}`);
+
     return res.status(200).json({
       message: 'Avatar updated successfully',
-      avatarUrl: user.avatar,
+      avatarUrl: uploadResult.secure_url,
       user
     });
   } catch (error) {
     console.error('Upload avatar error:', error);
-    return res.status(500).json({ message: 'Cannot upload avatar', detail: error.message });
+    return res.status(500).json({ 
+      message: 'Cannot upload avatar', 
+      detail: error.message 
+    });
   }
 };
 
